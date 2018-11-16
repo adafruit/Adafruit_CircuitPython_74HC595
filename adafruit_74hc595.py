@@ -20,7 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 """
-`Adafruit_74HC595`
+`adafruit_74hc595`
 ====================================================
 
 CircuitPython driver for 74HC595 shift register.
@@ -53,7 +53,7 @@ __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_74HC595.git"
 
 class DigitalInOut:
     """Digital input/output of the 74HC595.  The interface is exactly the
-    same as the digitalio.DigitalInOut class, however note that by design
+    same as the ``digitalio.DigitalInOut`` class, however note that by design
     this device is OUTPUT ONLY!  Attempting to read inputs or set
     direction as input will raise an exception.
     """
@@ -71,23 +71,22 @@ class DigitalInOut:
     # in this case.
     # pylint: disable=unused-argument
     def switch_to_output(self, value=False, **kwargs):
-        """DigitalInOut switch_to_output"""
+        """``DigitalInOut switch_to_output``"""
         self.direction = digitalio.Direction.OUTPUT
         self.value = value
 
     def switch_to_input(self, **kwargs):  # pylint: disable=no-self-use
-        """Do not call switch_to_input"""
+        """``switch_to_input`` is not supported."""
         raise RuntimeError('Digital input not supported.')
     # pylint: enable=unused-argument
 
     @property
     def value(self):
-        """Do not call value"""
-        raise RuntimeError('Digital input not supported.')
+        """The value of the pin, either True for high or False for low."""
+        return self._shift_register.gpio & (1 << self._pin) == (1 << self._pin)
 
     @value.setter
     def value(self, val):
-        # Only supported operation, writing a digital output.
         gpio = self._shift_register.gpio
         if val:
             gpio |= (1 << self._pin)
@@ -97,12 +96,12 @@ class DigitalInOut:
 
     @property
     def direction(self):
-        """ALWAYS an output!"""
+        """``Direction`` can only be set to ``OUTPUT``."""
         return digitalio.Direction.OUTPUT
 
     @direction.setter
     def direction(self, val):  # pylint: disable=no-self-use
-        """Can only be set as OUTPUT!"""
+        """``Direction`` can only be set to ``OUTPUT``."""
         if val != digitalio.Direction.OUTPUT:
             raise RuntimeError('Digital input not supported.')
 

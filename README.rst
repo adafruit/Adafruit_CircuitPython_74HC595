@@ -13,7 +13,7 @@ Introduction
     :target: https://travis-ci.org/adafruit/Adafruit_CircuitPython_74HC595
     :alt: Build Status
 
-.. todo:: Describe what the library does.
+CircuitPython driver for 74HC595 shift register.
 
 Dependencies
 =============
@@ -29,7 +29,26 @@ This is easily achieved by downloading
 Usage Example
 =============
 
-.. todo:: Add a quick, simple example. It and other examples should live in the examples folder and be included in docs/examples.rst.
+.. code-block:: python
+
+    import board
+    import adafruit_74hc595
+    import busio
+    import digitalio
+    import time
+
+    spi = busio.SPI(board.SCK, MOSI=board.MOSI)
+
+    latch_pin = digitalio.DigitalInOut(board.D5)
+    sr = adafruit_74hc595.ShiftRegister74HC595(spi, latch_pin)
+
+    pin1 = sr.get_pin(1)
+
+    while True:
+    pin1.value = True
+    time.sleep(1)
+    pin1.value = False
+    time.sleep(1)
 
 Contributing
 ============
