@@ -108,7 +108,7 @@ class DigitalInOut:
     @property
     def pull(self):
         """Pull-up/down not supported, return None for no pull-up/down."""
-        return digitalio.Pull.NONE
+        return None
 
     @pull.setter
     def pull(self, val):  # pylint: disable=no-self-use
