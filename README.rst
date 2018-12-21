@@ -9,8 +9,8 @@ Introduction
     :target: https://discord.gg/nBQh6qu
     :alt: Discord
 
-.. image:: https://travis-ci.org/adafruit/Adafruit_CircuitPython_74HC595.svg?branch=master
-    :target: https://travis-ci.org/adafruit/Adafruit_CircuitPython_74HC595
+.. image:: https://travis-ci.com/adafruit/Adafruit_CircuitPython_74HC595.svg?branch=master
+    :target: https://travis-ci.com/adafruit/Adafruit_CircuitPython_74HC595
     :alt: Build Status
 
 CircuitPython driver for 74HC595 shift register.
