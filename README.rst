@@ -9,8 +9,8 @@ Introduction
     :target: https://discord.gg/nBQh6qu
     :alt: Discord
 
-.. image:: https://travis-ci.com/adafruit/Adafruit_CircuitPython_74HC595.svg?branch=master
-    :target: https://travis-ci.com/adafruit/Adafruit_CircuitPython_74HC595
+.. image:: https://github.com/adafruit/Adafruit_CircuitPython_74HC595/workflows/Build%20CI/badge.svg
+    :target: https://github.com/adafruit/Adafruit_CircuitPython_74HC595/actions
     :alt: Build Status
 
 CircuitPython driver for 74HC595 shift register.
@@ -27,7 +27,7 @@ This is easily achieved by downloading
 `the Adafruit library and driver bundle <https://github.com/adafruit/Adafruit_CircuitPython_Bundle>`_.
 
 Installing from PyPI
---------------------
+====================
 
 On supported GNU/Linux systems like the Raspberry Pi, you can install the driver locally `from
 PyPI <https://pypi.org/project/adafruit-circuitpython-74hc595/>`_. To install for current user:
