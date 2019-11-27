@@ -76,7 +76,6 @@ class DigitalInOut:
         self.value = value
 
     def switch_to_input(self, **kwargs):  # pylint: disable=no-self-use
-        """``switch_to_input`` is not supported."""
         raise RuntimeError('Digital input not supported.')
     # pylint: enable=unused-argument
 
