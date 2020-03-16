@@ -49,8 +49,6 @@ __version__ = "0.0.0-auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_74HC595.git"
 
 
-
-
 class DigitalInOut:
     """Digital input/output of the 74HC595.  The interface is exactly the
     same as the ``digitalio.DigitalInOut`` class, however note that by design
@@ -77,7 +75,8 @@ class DigitalInOut:
 
     def switch_to_input(self, **kwargs):  # pylint: disable=no-self-use
         """``switch_to_input`` is not supported."""
-        raise RuntimeError('Digital input not supported.')
+        raise RuntimeError("Digital input not supported.")
+
     # pylint: enable=unused-argument
 
     @property
@@ -89,7 +88,7 @@ class DigitalInOut:
     def value(self, val):
         gpio = self._shift_register.gpio
         if val:
-            gpio |= (1 << self._pin)
+            gpio |= 1 << self._pin
         else:
             gpio &= ~(1 << self._pin)
         self._shift_register.gpio = gpio
@@ -103,7 +102,7 @@ class DigitalInOut:
     def direction(self, val):  # pylint: disable=no-self-use
         """``Direction`` can only be set to ``OUTPUT``."""
         if val != digitalio.Direction.OUTPUT:
-            raise RuntimeError('Digital input not supported.')
+            raise RuntimeError("Digital input not supported.")
 
     @property
     def pull(self):
@@ -114,11 +113,12 @@ class DigitalInOut:
     def pull(self, val):  # pylint: disable=no-self-use
         """Only supports null/no pull state."""
         if val is not None:
-            raise RuntimeError('Pull-up and pull-down not supported.')
+            raise RuntimeError("Pull-up and pull-down not supported.")
 
 
 class ShiftRegister74HC595:
     """Initialise the 74HC595 on specified SPI bus."""
+
     def __init__(self, spi, latch):
         self._device = spi_device.SPIDevice(spi, latch, baudrate=1000000)
         self._gpio = bytearray(1)
