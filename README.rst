@@ -70,10 +70,10 @@ Usage Example
     pin1 = sr.get_pin(1)
 
     while True:
-    pin1.value = True
-    time.sleep(1)
-    pin1.value = False
-    time.sleep(1)
+        pin1.value = True
+        time.sleep(1)
+        pin1.value = False
+        time.sleep(1)
 
 Contributing
 ============
