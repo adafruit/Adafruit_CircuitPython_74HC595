@@ -28,7 +28,7 @@ Implementation Notes
 import digitalio
 import adafruit_bus_device.spi_device as spi_device
 
-__version__ = "1.2.4"
+__version__ = "0.0.0-auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_74HC595.git"
 
 
