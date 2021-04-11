@@ -28,7 +28,7 @@ Implementation Notes
 import digitalio
 import adafruit_bus_device.spi_device as spi_device
 
-__version__ = "0.0.0-auto.0"
+__version__ = "1.2.4"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_74HC595.git"
 
 
@@ -44,6 +44,8 @@ class DigitalInOut:
         ShiftRegister74HC595 instance.
         """
         self._pin = pin_number
+        self._bytePos = int(self._pin / 8); 
+        self._bytePin = self._pin % 8
         self._shift_register = shift_register_74hc595
 
     # kwargs in switch functions below are _necessary_ for compatibility
@@ -65,16 +67,18 @@ class DigitalInOut:
     @property
     def value(self):
         """The value of the pin, either True for high or False for low."""
-        return self._shift_register.gpio & (1 << self._pin) == (1 << self._pin)
+        return self._shift_register.gpio[self._bytePos] & (1 << self._bytePin) == (1 << self._bytePin)
 
     @value.setter
     def value(self, val):
-        gpio = self._shift_register.gpio
-        if val:
-            gpio |= 1 << self._pin
-        else:
-            gpio &= ~(1 << self._pin)
-        self._shift_register.gpio = gpio
+    
+        if self._pin >=0 and self._pin < self._shift_register._numberOfShiftRegisters * 8:
+            gpio = self._shift_register.gpio
+            if val:
+                gpio[self._bytePos] |= 1 << self._bytePin
+            else:
+                gpio[self._bytePos] &= ~(1 << self._bytePin)
+            self._shift_register.gpio = gpio
 
     @property
     def direction(self):
@@ -102,21 +106,27 @@ class DigitalInOut:
 class ShiftRegister74HC595:
     """Initialise the 74HC595 on specified SPI bus."""
 
-    def __init__(self, spi, latch):
-        self._device = spi_device.SPIDevice(spi, latch, baudrate=1000000)
-        self._gpio = bytearray(1)
-        self._gpio[0] = 0x00
+    def __init__(self, spi, latch, numberOfShiftRegisters=1):
+        self._device = spi_device.SPIDevice(spi, latch,baudrate=1000000)
+        self._numberOfShiftRegisters = numberOfShiftRegisters
+        self._gpio = bytearray(self._numberOfShiftRegisters)
+        for x in range(0, self._numberOfShiftRegisters-1):
+            self._gpio[x] = 0x00
 
     @property
     def gpio(self):
         """The raw GPIO output register.  Each bit represents the
         output value of the associated pin (0 = low, 1 = high).
         """
-        return self._gpio[0]
+        return self._gpio
 
     @gpio.setter
     def gpio(self, val):
-        self._gpio[0] = val & 0xFF
+      
+        
+        for x in range(0, self._numberOfShiftRegisters-1):
+            self._gpio[x] = val[x] & 0xFF
+           
         with self._device as spi:
             # pylint: disable=no-member
             spi.write(self._gpio)
@@ -125,5 +135,5 @@ class ShiftRegister74HC595:
         """Convenience function to create an instance of the DigitalInOut class
         pointing at the specified pin of this 74HC595 device .
         """
-        assert 0 <= pin <= 7
+        assert 0 <= pin <= (self._numberOfShiftRegisters * 8) -1
         return DigitalInOut(pin, self)
