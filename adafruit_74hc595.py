@@ -132,9 +132,7 @@ class ShiftRegister74HC595:
 
     @gpio.setter
     def gpio(self, val):
-
-        for x in range(0, self._number_of_shift_registers - 1):
-            self._gpio[x] = val[x] & 0xFF
+        self._gpio = val
 
         with self._device as spi:
             # pylint: disable=no-member
