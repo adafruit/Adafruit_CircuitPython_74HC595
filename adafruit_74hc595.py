@@ -117,8 +117,6 @@ class ShiftRegister74HC595:
         self._device = spi_device.SPIDevice(spi, latch, baudrate=1000000)
         self._number_of_shift_registers = number_of_shift_registers
         self._gpio = bytearray(self._number_of_shift_registers)
-        for x in range(0, self._number_of_shift_registers - 1):
-            self._gpio[x] = 0x00
 
     @property
     def number_of_shift_registers(self):
