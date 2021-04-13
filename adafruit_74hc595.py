@@ -44,7 +44,7 @@ class DigitalInOut:
         ShiftRegister74HC595 instance.
         """
         self._pin = pin_number
-        self._byte_pos = int(self._pin / 8)
+        self._byte_pos = self._pin // 8
         self._byte_pin = self._pin % 8
         self._shift_register = shift_register_74hc595
 
