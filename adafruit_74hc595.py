@@ -28,6 +28,13 @@ Implementation Notes
 import digitalio
 import adafruit_bus_device.spi_device as spi_device
 
+try:
+    import typing
+    from _typing import ReadableBuffer
+    from microcontroller import Pin
+    import busio
+except ImportError:
+    pass
 
 __version__ = "0.0.0-auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_74HC595.git"
@@ -42,7 +49,7 @@ class DigitalInOut:
 
     def __init__(
         self,
-        pin_number: "microcontroller.Pin",
+        pin_number: Pin,
         shift_register_74hc595: "ShiftRegister74HC595",
     ):
         """Specify the pin number of the shift register (0...7) and
@@ -120,7 +127,7 @@ class ShiftRegister74HC595:
 
     def __init__(
         self,
-        spi: "busio.I2C",
+        spi: busio.I2C,
         latch: digitalio.DigitalInOut,
         number_of_shift_registers: int = 1,
     ):
@@ -141,14 +148,14 @@ class ShiftRegister74HC595:
         return self._gpio
 
     @gpio.setter
-    def gpio(self, val: "_typing.ReadableBuffer"):
+    def gpio(self, val: ReadableBuffer):
         self._gpio = val
 
         with self._device as spi:
             # pylint: disable=no-member
             spi.write(self._gpio)
 
-    def get_pin(self, pin: int) -> "microcontroller.Pin":
+    def get_pin(self, pin: int) -> Pin:
         """Convenience function to create an instance of the DigitalInOut class
         pointing at the specified pin of this 74HC595 device .
         """
