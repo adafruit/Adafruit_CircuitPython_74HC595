@@ -26,7 +26,14 @@ Implementation Notes
 """
 
 import digitalio
-import adafruit_bus_device.spi_device as spi_device
+from adafruit_bus_device import spi_device
+
+try:
+    import typing  # pylint: disable=unused-import
+    from microcontroller import Pin
+    import busio
+except ImportError:
+    pass
 
 __version__ = "0.0.0-auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_74HC595.git"
@@ -39,7 +46,11 @@ class DigitalInOut:
     direction as input will raise an exception.
     """
 
-    def __init__(self, pin_number, shift_register_74hc595):
+    def __init__(
+        self,
+        pin_number: Pin,
+        shift_register_74hc595: "ShiftRegister74HC595",
+    ):
         """Specify the pin number of the shift register (0...7) and
         ShiftRegister74HC595 instance.
         """
@@ -53,7 +64,7 @@ class DigitalInOut:
     # is unused by this class).  Do not remove them, instead turn off pylint
     # in this case.
     # pylint: disable=unused-argument
-    def switch_to_output(self, value=False, **kwargs):
+    def switch_to_output(self, value: bool = False, **kwargs):
         """``DigitalInOut switch_to_output``"""
         self.direction = digitalio.Direction.OUTPUT
         self.value = value
@@ -72,7 +83,7 @@ class DigitalInOut:
         )
 
     @value.setter
-    def value(self, val):
+    def value(self, val: bool):
 
         if (
             self._pin >= 0
@@ -91,7 +102,7 @@ class DigitalInOut:
         return digitalio.Direction.OUTPUT
 
     @direction.setter
-    def direction(self, val):  # pylint: disable=no-self-use
+    def direction(self, val: digitalio.Direction):  # pylint: disable=no-self-use
         """``Direction`` can only be set to ``OUTPUT``."""
         if val != digitalio.Direction.OUTPUT:
             raise RuntimeError("Digital input not supported.")
@@ -102,7 +113,7 @@ class DigitalInOut:
         return None
 
     @pull.setter
-    def pull(self, val):  # pylint: disable=no-self-use
+    def pull(self, val: digitalio.Pull):  # pylint: disable=no-self-use
         """Only supports null/no pull state."""
         if val is not None:
             raise RuntimeError("Pull-up and pull-down not supported.")
@@ -113,7 +124,12 @@ class ShiftRegister74HC595:
     and indicate the number of shift registers being used
     """
 
-    def __init__(self, spi, latch, number_of_shift_registers=1):
+    def __init__(
+        self,
+        spi: busio.SPI,
+        latch: digitalio.DigitalInOut,
+        number_of_shift_registers: int = 1,
+    ):
         self._device = spi_device.SPIDevice(spi, latch, baudrate=1000000)
         self._number_of_shift_registers = number_of_shift_registers
         self._gpio = bytearray(self._number_of_shift_registers)
@@ -131,14 +147,14 @@ class ShiftRegister74HC595:
         return self._gpio
 
     @gpio.setter
-    def gpio(self, val):
+    def gpio(self, val: bytearray):
         self._gpio = val
 
         with self._device as spi:
             # pylint: disable=no-member
             spi.write(self._gpio)
 
-    def get_pin(self, pin):
+    def get_pin(self, pin: int) -> Pin:
         """Convenience function to create an instance of the DigitalInOut class
         pointing at the specified pin of this 74HC595 device .
         """
