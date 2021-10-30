@@ -26,10 +26,10 @@ Implementation Notes
 """
 
 import digitalio
-from  adafruit_bus_device import spi_device
+from adafruit_bus_device import spi_device
 
 try:
-    import typing # pylint: disable=unused-import
+    import typing  # pylint: disable=unused-import
     from microcontroller import Pin
     import busio
 except ImportError:
