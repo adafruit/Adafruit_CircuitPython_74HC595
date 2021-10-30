@@ -26,7 +26,7 @@ Implementation Notes
 """
 
 import digitalio
-import adafruit_bus_device.spi_device as spi_device
+from  adafruit_bus_device import spi_device
 
 try:
     import typing
