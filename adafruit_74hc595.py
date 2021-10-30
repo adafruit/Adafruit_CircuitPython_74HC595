@@ -126,7 +126,7 @@ class ShiftRegister74HC595:
 
     def __init__(
         self,
-        spi: busio.I2C,
+        spi: busio.SPI,
         latch: digitalio.DigitalInOut,
         number_of_shift_registers: int = 1,
     ):
