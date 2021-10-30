@@ -29,8 +29,7 @@ import digitalio
 from  adafruit_bus_device import spi_device
 
 try:
-    import typing
-    from _typing import ReadableBuffer
+    import typing # pylint: disable=unused-import
     from microcontroller import Pin
     import busio
 except ImportError:
@@ -148,7 +147,7 @@ class ShiftRegister74HC595:
         return self._gpio
 
     @gpio.setter
-    def gpio(self, val: ReadableBuffer):
+    def gpio(self, val: bytearray):
         self._gpio = val
 
         with self._device as spi:
