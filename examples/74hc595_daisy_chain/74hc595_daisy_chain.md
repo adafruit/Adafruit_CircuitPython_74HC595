@@ -29,14 +29,14 @@ In the wiring, the ItsyBitsy M0 is not powered, given that one can power it up t
 
 Also, one may notice that, for the first 8 LEDs (from left to right), the pins from the 74HC595 at the *end* of the daisy chain are fully utilized, which means that the end of the daisy chain is actually the first device, the index 0 device.
 
-Therefore, 
+Therefore,
 - for pin index 0~7, the value will be sent to the device at the end of the daisy chain
 - for pin index 8~15, the value will be sent to the device the second end of the daisy chain (which is the head of the daisy chain in this example)
 
 # Coding
 
-The example code can be found in `74hc595_daisy_chain.py`. 
-Here are some notes about the codes: 
+The example code can be found in `74hc595_daisy_chain.py`.
+Here are some notes about the codes:
 
 ## Import Modules
 
@@ -49,7 +49,7 @@ import adafruit_74hc595
 
 ## Instantiate Class
 
-One need to provide the number of shift registers when instantiating the class. 
+One need to provide the number of shift registers when instantiating the class.
 
 ```python
 # note: D2 port is close to SCK and MOSI pins for Itsy Bitsy M0
@@ -62,17 +62,17 @@ shift_register_pins = [sr.get_pin(n) for n in range(shift_register_pin_num)]
 
 ## Do Something with the Pins
 
-One simple example is to blink all LEDs together: 
+One simple example is to blink all LEDs together:
 
 ```python
 while True:
     # turn all LEDs on
-    for i in range(shift_register_pin_num): 
+    for i in range(shift_register_pin_num):
         shift_register_pins[i].value = True
     time.sleep(0.5)
 
     # turn all LEDs off
-    for i in range(shift_register_pin_num): 
+    for i in range(shift_register_pin_num):
         shift_register_pins[i].value = False
     time.sleep(0.5)
 ```
@@ -89,7 +89,7 @@ while True:
     if bar_ind_current <= (shift_register_pin_num-1):
         shift_register_pins[bar_ind_last].value = False
         shift_register_pins[bar_ind_current].value = True
-    else: 
+    else:
         bar_ind_current = 0
         shift_register_pins[bar_ind_last].value = False
         shift_register_pins[bar_ind_current].value = True
