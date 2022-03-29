@@ -136,7 +136,7 @@ class ShiftRegister74HC595:
 
     @property
     def number_of_shift_registers(self):
-        """The number of shift register chips """
+        """The number of shift register chips"""
         return self._number_of_shift_registers
 
     @property
