@@ -120,7 +120,7 @@ class DigitalInOut:
 
 
 class ShiftRegister74HC595:
-    """Initialise the 74HC595 on specified SPI bus, indicate the 
+    """Initialise the 74HC595 on specified SPI bus, indicate the
     number of shift registers being used and optional baudrate.
     """
 
