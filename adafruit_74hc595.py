@@ -120,8 +120,8 @@ class DigitalInOut:
 
 
 class ShiftRegister74HC595:
-    """Initialise the 74HC595 on specified SPI bus
-    and indicate the number of shift registers being used
+    """Initialise the 74HC595 on specified SPI bus, indicate the
+    number of shift registers being used and optional baudrate.
     """
 
     def __init__(
@@ -129,8 +129,9 @@ class ShiftRegister74HC595:
         spi: busio.SPI,
         latch: digitalio.DigitalInOut,
         number_of_shift_registers: int = 1,
+        baudrate: int = 1000000,
     ):
-        self._device = spi_device.SPIDevice(spi, latch, baudrate=1000000)
+        self._device = spi_device.SPIDevice(spi, latch, baudrate=baudrate)
         self._number_of_shift_registers = number_of_shift_registers
         self._gpio = bytearray(self._number_of_shift_registers)
 
