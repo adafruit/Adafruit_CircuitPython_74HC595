@@ -106,7 +106,10 @@ class DigitalInOut:
         return digitalio.Direction.OUTPUT
 
     @direction.setter
-    def direction(self, val: digitalio.Direction) -> None:  # pylint: disable=no-self-use
+    def direction(  # pylint: disable=no-self-use
+        self,
+        val: digitalio.Direction,
+    ) -> None:
         """``Direction`` can only be set to ``OUTPUT``."""
         if val != digitalio.Direction.OUTPUT:
             raise RuntimeError("Digital input not supported.")
@@ -117,7 +120,10 @@ class DigitalInOut:
         return None
 
     @pull.setter
-    def pull(self, val: "typing.Optional[digitalio.Pull]") -> None:  # pylint: disable=no-self-use
+    def pull(  # pylint: disable=no-self-use
+        self,
+        val: "typing.Optional[digitalio.Pull]",
+    ) -> None:
         """Only supports null/no pull state."""
         if val is not None:
             raise RuntimeError("Pull-up and pull-down not supported.")
