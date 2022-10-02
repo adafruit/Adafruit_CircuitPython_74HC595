@@ -32,6 +32,7 @@ try:
     import typing  # pylint: disable=unused-import
     from microcontroller import Pin
     import busio
+    from circuitpython_typing import ReadableBuffer
 except ImportError:
     pass
 
@@ -101,7 +102,7 @@ class DigitalInOut:
             self._shift_register.gpio = gpio
 
     @property
-    def direction(self) -> "typing.Optional[digitalio.Direction]":
+    def direction(self) -> digitalio.Direction.OUTPUT:
         """``Direction`` can only be set to ``OUTPUT``."""
         return digitalio.Direction.OUTPUT
 
@@ -109,7 +110,7 @@ class DigitalInOut:
     def direction(  # pylint: disable=no-self-use
         self,
         val: digitalio.Direction,
-    ) -> None:
+    ) -> "typing.Union[None, typing.NoReturn]":
         """``Direction`` can only be set to ``OUTPUT``."""
         if val != digitalio.Direction.OUTPUT:
             raise RuntimeError("Digital input not supported.")
@@ -120,10 +121,7 @@ class DigitalInOut:
         return None
 
     @pull.setter
-    def pull(  # pylint: disable=no-self-use
-        self,
-        val: "typing.Optional[digitalio.Pull]",
-    ) -> None:
+    def pull(self, val: None) -> None:  # pylint: disable=no-self-use
         """Only supports null/no pull state."""
         if val is not None:
             raise RuntimeError("Pull-up and pull-down not supported.")
@@ -136,7 +134,7 @@ class ShiftRegister74HC595:
 
     _device: spi_device.SPIDevice
     _number_of_shift_registers: int
-    _gpio: bytes
+    _gpio: ReadableBuffer
 
     def __init__(
         self,
@@ -154,14 +152,14 @@ class ShiftRegister74HC595:
         return self._number_of_shift_registers
 
     @property
-    def gpio(self) -> bytes:
+    def gpio(self) -> ReadableBuffer:
         """The raw GPIO output register.  Each bit represents the
         output value of the associated pin (0 = low, 1 = high).
         """
         return self._gpio
 
     @gpio.setter
-    def gpio(self, val: bytes) -> None:
+    def gpio(self, val: ReadableBuffer) -> None:
         self._gpio = val
 
         with self._device as spi:
