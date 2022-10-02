@@ -109,8 +109,8 @@ class DigitalInOut:
     @direction.setter
     def direction(  # pylint: disable=no-self-use
         self,
-        val: digitalio.Direction,
-    ) -> "typing.Union[None, typing.NoReturn]":
+        val: digitalio.Direction.OUTPUT,
+    ) -> None:
         """``Direction`` can only be set to ``OUTPUT``."""
         if val != digitalio.Direction.OUTPUT:
             raise RuntimeError("Digital input not supported.")
