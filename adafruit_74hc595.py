@@ -32,6 +32,7 @@ try:
     import typing  # pylint: disable=unused-import
     from microcontroller import Pin
     import busio
+    from circuitpython_typing import ReadableBuffer
 except ImportError:
     pass
 
@@ -46,11 +47,16 @@ class DigitalInOut:
     direction as input will raise an exception.
     """
 
+    _pin: Pin
+    _byte_pos: int
+    _byte_pin: int
+    _shift_register: "ShiftRegister74HC595"
+
     def __init__(
         self,
         pin_number: Pin,
         shift_register_74hc595: "ShiftRegister74HC595",
-    ):
+    ) -> None:
         """Specify the pin number of the shift register (0...7) and
         ShiftRegister74HC595 instance.
         """
@@ -64,27 +70,26 @@ class DigitalInOut:
     # is unused by this class).  Do not remove them, instead turn off pylint
     # in this case.
     # pylint: disable=unused-argument
-    def switch_to_output(self, value: bool = False, **kwargs):
+    def switch_to_output(self, value: bool = False, **kwargs) -> None:
         """``DigitalInOut switch_to_output``"""
         self.direction = digitalio.Direction.OUTPUT
         self.value = value
 
-    def switch_to_input(self, **kwargs):  # pylint: disable=no-self-use
+    def switch_to_input(self, **kwargs) -> None:  # pylint: disable=no-self-use
         """``switch_to_input`` is not supported."""
         raise RuntimeError("Digital input not supported.")
 
     # pylint: enable=unused-argument
 
     @property
-    def value(self):
+    def value(self) -> bool:
         """The value of the pin, either True for high or False for low."""
         return self._shift_register.gpio[self._byte_pos] & (1 << self._byte_pin) == (
             1 << self._byte_pin
         )
 
     @value.setter
-    def value(self, val: bool):
-
+    def value(self, val: bool) -> None:
         if (
             self._pin >= 0
             and self._pin < self._shift_register.number_of_shift_registers * 8
@@ -97,23 +102,26 @@ class DigitalInOut:
             self._shift_register.gpio = gpio
 
     @property
-    def direction(self):
+    def direction(self) -> digitalio.Direction.OUTPUT:
         """``Direction`` can only be set to ``OUTPUT``."""
         return digitalio.Direction.OUTPUT
 
     @direction.setter
-    def direction(self, val: digitalio.Direction):  # pylint: disable=no-self-use
+    def direction(  # pylint: disable=no-self-use
+        self,
+        val: digitalio.Direction.OUTPUT,
+    ) -> None:
         """``Direction`` can only be set to ``OUTPUT``."""
         if val != digitalio.Direction.OUTPUT:
             raise RuntimeError("Digital input not supported.")
 
     @property
-    def pull(self):
+    def pull(self) -> None:
         """Pull-up/down not supported, return None for no pull-up/down."""
         return None
 
     @pull.setter
-    def pull(self, val: digitalio.Pull):  # pylint: disable=no-self-use
+    def pull(self, val: None) -> None:  # pylint: disable=no-self-use
         """Only supports null/no pull state."""
         if val is not None:
             raise RuntimeError("Pull-up and pull-down not supported.")
@@ -124,38 +132,42 @@ class ShiftRegister74HC595:
     number of shift registers being used and optional baudrate.
     """
 
+    _device: spi_device.SPIDevice
+    _number_of_shift_registers: int
+    _gpio: ReadableBuffer
+
     def __init__(
         self,
         spi: busio.SPI,
         latch: digitalio.DigitalInOut,
         number_of_shift_registers: int = 1,
         baudrate: int = 1000000,
-    ):
+    ) -> None:
         self._device = spi_device.SPIDevice(spi, latch, baudrate=baudrate)
         self._number_of_shift_registers = number_of_shift_registers
         self._gpio = bytearray(self._number_of_shift_registers)
 
     @property
-    def number_of_shift_registers(self):
+    def number_of_shift_registers(self) -> int:
         """The number of shift register chips"""
         return self._number_of_shift_registers
 
     @property
-    def gpio(self):
+    def gpio(self) -> ReadableBuffer:
         """The raw GPIO output register.  Each bit represents the
         output value of the associated pin (0 = low, 1 = high).
         """
         return self._gpio
 
     @gpio.setter
-    def gpio(self, val: bytearray):
+    def gpio(self, val: ReadableBuffer) -> None:
         self._gpio = val
 
         with self._device as spi:
             # pylint: disable=no-member
             spi.write(self._gpio)
 
-    def get_pin(self, pin: int) -> Pin:
+    def get_pin(self, pin: int) -> DigitalInOut:
         """Convenience function to create an instance of the DigitalInOut class
         pointing at the specified pin of this 74HC595 device .
         """
