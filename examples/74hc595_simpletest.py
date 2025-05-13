@@ -2,9 +2,11 @@
 # SPDX-License-Identifier: MIT
 
 import time
+
 import board
 import busio
 import digitalio
+
 import adafruit_74hc595
 
 spi = busio.SPI(board.SCK, MOSI=board.MOSI)
