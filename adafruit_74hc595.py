@@ -29,10 +29,11 @@ import digitalio
 from adafruit_bus_device import spi_device
 
 try:
-    import typing  # pylint: disable=unused-import
-    from microcontroller import Pin
+    import typing
+
     import busio
     from circuitpython_typing import ReadableBuffer
+    from microcontroller import Pin
 except ImportError:
     pass
 
@@ -69,13 +70,12 @@ class DigitalInOut:
     # with DigitalInout class (which allows specifying pull, etc. which
     # is unused by this class).  Do not remove them, instead turn off pylint
     # in this case.
-    # pylint: disable=unused-argument
     def switch_to_output(self, value: bool = False, **kwargs) -> None:
         """``DigitalInOut switch_to_output``"""
         self.direction = digitalio.Direction.OUTPUT
         self.value = value
 
-    def switch_to_input(self, **kwargs) -> None:  # pylint: disable=no-self-use
+    def switch_to_input(self, **kwargs) -> None:  # noqa: PLR6301
         """``switch_to_input`` is not supported."""
         raise RuntimeError("Digital input not supported.")
 
@@ -90,10 +90,7 @@ class DigitalInOut:
 
     @value.setter
     def value(self, val: bool) -> None:
-        if (
-            self._pin >= 0
-            and self._pin < self._shift_register.number_of_shift_registers * 8
-        ):
+        if self._pin >= 0 and self._pin < self._shift_register.number_of_shift_registers * 8:
             gpio = self._shift_register.gpio
             if val:
                 gpio[self._byte_pos] |= 1 << self._byte_pin
@@ -107,7 +104,7 @@ class DigitalInOut:
         return digitalio.Direction.OUTPUT
 
     @direction.setter
-    def direction(  # pylint: disable=no-self-use
+    def direction(  # noqa: PLR6301
         self,
         val: digitalio.Direction.OUTPUT,
     ) -> None:
@@ -121,7 +118,7 @@ class DigitalInOut:
         return None
 
     @pull.setter
-    def pull(self, val: None) -> None:  # pylint: disable=no-self-use
+    def pull(self, val: None) -> None:  # noqa: PLR6301
         """Only supports null/no pull state."""
         if val is not None:
             raise RuntimeError("Pull-up and pull-down not supported.")
@@ -164,7 +161,6 @@ class ShiftRegister74HC595:
         self._gpio = val
 
         with self._device as spi:
-            # pylint: disable=no-member
             spi.write(self._gpio)
 
     def get_pin(self, pin: int) -> DigitalInOut:

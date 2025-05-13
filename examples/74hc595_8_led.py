@@ -2,8 +2,10 @@
 # SPDX-License-Identifier: MIT
 
 import time
+
 import board
 import digitalio
+
 import adafruit_74hc595
 
 latch_pin = digitalio.DigitalInOut(board.D5)

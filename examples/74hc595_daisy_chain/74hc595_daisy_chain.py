@@ -2,15 +2,15 @@
 # SPDX-License-Identifier: MIT
 
 import time
+
 import board
 import digitalio
+
 import adafruit_74hc595
 
 # note: D2 port is close to SCK and MOSI pins for Itsy Bitsy M0
 latch_pin = digitalio.DigitalInOut(board.D2)
-sr = adafruit_74hc595.ShiftRegister74HC595(
-    board.SPI(), latch_pin, number_of_shift_registers=2
-)
+sr = adafruit_74hc595.ShiftRegister74HC595(board.SPI(), latch_pin, number_of_shift_registers=2)
 
 shift_register_pin_num = 10
 shift_register_pins = [sr.get_pin(n) for n in range(shift_register_pin_num)]
