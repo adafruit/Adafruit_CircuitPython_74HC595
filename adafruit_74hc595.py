@@ -8,7 +8,7 @@
 
 CircuitPython driver for 74HC595 shift register.
 
-* Author(s): Kattni Rembor, Tony DiCola
+* Author(s): Kattni Rembor, Tony DiCola, Melissa LeBlanc-Williams
 
 Implementation Notes
 --------------------
@@ -135,12 +135,28 @@ class ShiftRegister74HC595:
 
     def __init__(
         self,
-        spi: busio.SPI,
-        latch: digitalio.DigitalInOut,
+        spi: typing.Optional[busio.SPI] = None,
+        latch: DigitalInOut = None,
+        clock: typing.Optional[DigitalInOut] = None,
+        data: typing.Optional[DigitalInOut] = None,
         number_of_shift_registers: int = 1,
         baudrate: int = 1000000,
     ) -> None:
-        self._device = spi_device.SPIDevice(spi, latch, baudrate=baudrate)
+        if latch is None:
+            raise ValueError("A latch DigitalInOut must be provided.")
+        if spi is not None:
+            self._device = spi_device.SPIDevice(spi, latch, baudrate=baudrate)
+        elif clock is not None and data is not None:
+            self._device = None
+            self._latch = latch
+            self._latch.switch_to_output(value=False)
+            self._clock = clock
+            self._clock.switch_to_output(value=False)
+            self._data = data
+            self._data.switch_to_output(value=False)
+        else:
+            raise ValueError("Either SPI or clock and data DigitalInOuts must be provided.")
+
         self._number_of_shift_registers = number_of_shift_registers
         self._gpio = bytearray(self._number_of_shift_registers)
 
@@ -159,9 +175,14 @@ class ShiftRegister74HC595:
     @gpio.setter
     def gpio(self, val: ReadableBuffer) -> None:
         self._gpio = val
-
-        with self._device as spi:
-            spi.write(self._gpio)
+        if self._device is not None:
+            with self._device as spi:
+                spi.write(self._gpio)
+        else:
+            self._latch.value = False
+            for byte in reversed(self._gpio):
+                self._output_byte(byte)
+            self._latch.value = True
 
     def get_pin(self, pin: int) -> DigitalInOut:
         """Convenience function to create an instance of the DigitalInOut class
@@ -169,3 +190,10 @@ class ShiftRegister74HC595:
         """
         assert 0 <= pin <= (self._number_of_shift_registers * 8) - 1
         return DigitalInOut(pin, self)
+
+    def _output_byte(self, value: int) -> None:
+        """Shift out a byte of data one bit at a time."""
+        for i in range(8):
+            self._clock.value = False
+            self._data.value = (value & (1 << (7 - i))) != 0
+            self._clock.value = True
